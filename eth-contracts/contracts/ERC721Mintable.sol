@@ -38,6 +38,7 @@ contract Ownable {
 }
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
+// -> implemented in Pausable class from openzeppelin
 //  1) create a private '_paused' variable of type bool
 //  2) create a public setter using the inherited onlyOwner modifier
 //  3) create an internal constructor that sets the _paused variable to false
@@ -84,7 +85,7 @@ contract ERC165 {
     }
 }
 
-contract ERC721 is Pausable, ERC165 {
+contract ERC721 is Pausable, ERC165, Ownable {
     event Transfer(
         address indexed from,
         address indexed to,
@@ -136,18 +137,29 @@ contract ERC721 is Pausable, ERC165 {
     function balanceOf(address owner) public view returns (uint256) {
         // TODO return the token balance of given address
         // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
+        return Counters.current(_ownedTokensCount[address]);
     }
 
     function ownerOf(uint256 tokenId) public view returns (address) {
         // TODO return the owner of the given tokenId
+        return _tokenOwner[tokenId];
     }
 
+    //TODO check in more details
     //    @dev Approves another address to transfer the given token ID
     function approve(address to, uint256 tokenId) public {
         // TODO require the given address to not be the owner of the tokenId
+        require(to != _tokenOwner[tokenId], "Must not be token owner");
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
+        require(
+            ((msg.sender == _owner) ||
+                (_isApprovedOrOwner(msg.sender, tokenId))),
+            "sender is owner or approved"
+        );
         // TODO add 'to' address to token approvals
+        _tokenApprovals[tokenId] = to;
         // TODO emit Approval Event
+        emit Approval(to, msg.sender, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address) {
