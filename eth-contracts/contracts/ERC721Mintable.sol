@@ -4,7 +4,7 @@ import "openzeppelin-solidity/contracts/utils/Address.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol";
-import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
+//import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "./Oraclize.sol";
 
 contract Ownable {
@@ -38,12 +38,42 @@ contract Ownable {
 }
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
-// -> implemented in Pausable class from openzeppelin
+contract Pausable is Ownable {
 //  1) create a private '_paused' variable of type bool
+    bool private _paused;
 //  2) create a public setter using the inherited onlyOwner modifier
+
+    function setPause(bool state) require only Owner {
+        _paused = state;
+        if(_paused == true) 
+            emit Paused(msg.sender)
+        else
+            emit Unpaused(msg.sender);
+    }
 //  3) create an internal constructor that sets the _paused variable to false
+    constructor() {
+        _paused = false;
+    }
 //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
+    modifier whenNotPaused(){
+        require(_paused == false, "Operation must not be paused");
+        _;
+    }
+
+    modifier paused(){
+        require(_paused == true, "Operation must be in paused");
+        _;
+    }
 //  5) create a Paused & Unpaused event that emits the address that triggered the event
+    event Paused(
+        address emitter
+    );
+
+    event Unpaused(
+        address emitter
+    );
+
+}
 
 contract ERC165 {
     bytes4 private constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
@@ -85,7 +115,7 @@ contract ERC165 {
     }
 }
 
-contract ERC721 is Pausable, ERC165, Ownable {
+contract ERC721 is Pausable, ERC165{
     event Transfer(
         address indexed from,
         address indexed to,
