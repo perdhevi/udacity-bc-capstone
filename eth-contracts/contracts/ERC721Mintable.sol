@@ -11,6 +11,9 @@ contract Ownable {
     //  TODO
     //  1) create a private '_owner' variable of type address with a public getter function
     address _owner;
+    function owner() public view returns(address){
+        return _owner;
+    }
 
     //  2) create an internal constructor that sets the _owner var to the creater of the contract
     constructor() public {
@@ -31,7 +34,7 @@ contract Ownable {
     function transferOwnership(address newOwner) public onlyOwner {
         // TODO add functionality to transfer control of the contract to a newOwner.
         address prev = _owner;
-        _owner = msg.sender;
+        _owner = newOwner;
         // make sure the new owner is a real address
         emit OwnershipTransfer(prev, _owner);
     }
@@ -306,7 +309,7 @@ contract ERC721 is Pausable, ERC165{
     ) internal {
         address owner = _tokenOwner[tokenId];
         // TODO: require from address is the owner of the given token
-        require(from != owner, "from is not owner" );
+        require(from == owner, "from is not owner" );
         // TODO: require token is being transfered to valid address
         require(to != address(0), "to address is invalid");
         // TODO: clear approval
@@ -314,6 +317,7 @@ contract ERC721 is Pausable, ERC165{
         // TODO: update token counts & transfer ownership of the token ID
         _ownedTokensCount[to].increment();
         _ownedTokensCount[from].decrement();
+        _tokenOwner[tokenId] = to;
         // TODO: emit correct event
         emit Transfer(from, to, tokenId);
     }
@@ -612,7 +616,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -returns a true boolean upon completion of the function
 //      -calls the superclass mint and setTokenURI functions
 
-contract UdacityERC721 is ERC721Metadata {
+contract ERC721Mintable is ERC721Metadata {
 
     constructor(string memory name, string memory symbol)
         ERC721Metadata(name, symbol, "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/")
