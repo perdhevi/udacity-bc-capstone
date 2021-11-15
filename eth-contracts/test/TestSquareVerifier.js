@@ -2,7 +2,7 @@
 var verifier = artifacts.require("Verifier");
 var proof = require("../../zokrates/code/square/proof.json");
 
-contract('TestERC721Mintable', accounts => {
+contract('Test Verifier', accounts => {
 // Test verification with correct proof
   describe('testing verifier', function() {
 
@@ -12,7 +12,7 @@ contract('TestERC721Mintable', accounts => {
 // - use the contents from proof.json generated from zokrates steps
     it("can can compute correct", async function() {
       let result = await this.contract.verifyTx.call(proof.proof, proof.inputs);
-
+      console.log(proof);
       assert.equal(result, true, "Must proof as correct");
     });
     

@@ -1,3 +1,35 @@
-// Test if a new solution can be added for contract - SolnSquareVerifier
+var SolnSquareVerifier = artifacts.require("SolnSquareVerifier");
+var proof = require("../../zokrates/code/square/proof.json");
 
+contract('SolnSquareVerifier', accounts => {
+
+  const account_one = accounts[0];
+  //const account_two = accounts[1];
+
+  describe('Create SolnSquare solutions', function () {
+    beforeEach(async function () { 
+      this.contract = await SolnSquareVerifier.new({from: account_one} );
+    });
+  
+    it('It can add new Solutions', async function () { 
+// Test if a new solution can be added for contract - SolnSquareVerifier
+      var generated = false;
+      let keyId = await this.contract.addSolution(account_one, 1, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
+      
+      let tokId = await this.contract.tokenSolution.call(keyId.logs[0].args[0]);
+      generated = true;
+      assert.equal(generated, true,"Contract can be added with solution");
+    });
+
+    it('It can mint new token', async function () { 
 // Test if an ERC721 token can be minted for contract - SolnSquareVerifier
+      
+      let keyId = await this.contract.addSolution(account_one, 2, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
+      let minted = await this.contract.mint(account_one, 2, keyId.logs[0].args[0]);
+
+      assert.equal(minted.logs[1].args["tokenId"] == 2, true, "Should be able to generate a token");
+    });
+
+
+  });
+});

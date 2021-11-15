@@ -11,7 +11,8 @@ contract Ownable {
     //  TODO
     //  1) create a private '_owner' variable of type address with a public getter function
     address _owner;
-    function owner() public view returns(address){
+
+    function owner() public view returns (address) {
         return _owner;
     }
 
@@ -42,41 +43,39 @@ contract Ownable {
 
 //  TODO's: Create a Pausable contract that inherits from the Ownable contract
 contract Pausable is Ownable {
-//  1) create a private '_paused' variable of type bool
+    //  1) create a private '_paused' variable of type bool
     bool private _paused;
-//  2) create a public setter using the inherited onlyOwner modifier
+
+    //  2) create a public setter using the inherited onlyOwner modifier
 
     function setPause(bool state) public onlyOwner {
         _paused = state;
-        if(_paused == true) {
+        if (_paused == true) {
             emit Paused(msg.sender);
         } else {
             emit Unpaused(msg.sender);
         }
     }
-//  3) create an internal constructor that sets the _paused variable to false
+
+    //  3) create an internal constructor that sets the _paused variable to false
     constructor() internal {
         _paused = false;
     }
-//  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
-    modifier whenNotPaused(){
+
+    //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
+    modifier whenNotPaused() {
         require(_paused == false, "Operation must not be paused");
         _;
     }
 
-    modifier paused(){
+    modifier paused() {
         require(_paused == true, "Operation must be in paused");
         _;
     }
-//  5) create a Paused & Unpaused event that emits the address that triggered the event
-    event Paused(
-        address emitter
-    );
+    //  5) create a Paused & Unpaused event that emits the address that triggered the event
+    event Paused(address emitter);
 
-    event Unpaused(
-        address emitter
-    );
-
+    event Unpaused(address emitter);
 }
 
 contract ERC165 {
@@ -119,7 +118,7 @@ contract ERC165 {
     }
 }
 
-contract ERC721 is Pausable, ERC165{
+contract ERC721 is Pausable, ERC165 {
     event Transfer(
         address indexed from,
         address indexed to,
@@ -291,13 +290,12 @@ contract ERC721 is Pausable, ERC165{
     function _mint(address to, uint256 tokenId) internal {
         // TODO revert if given tokenId already exists or given address is invalid
         require(!_exists(tokenId), "Token already exists");
-        require(to != address(0),"Invalid address");
+        require(to != address(0), "Invalid address");
         // TODO mint tokenId to given address & increase token count of owner
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to].increment();
         // TODO emit Transfer event
         emit Transfer(address(0), to, tokenId);
-
     }
 
     // @dev Internal function to transfer ownership of a given token ID to another address.
@@ -309,7 +307,7 @@ contract ERC721 is Pausable, ERC165{
     ) internal {
         address owner = _tokenOwner[tokenId];
         // TODO: require from address is the owner of the given token
-        require(from == owner, "from is not owner" );
+        require(from == owner, "from is not owner");
         // TODO: require token is being transfered to valid address
         require(to != address(0), "to address is invalid");
         // TODO: clear approval
@@ -441,6 +439,8 @@ contract ERC721Enumerable is ERC165, ERC721 {
         _addTokenToOwnerEnumeration(to, tokenId);
     }
 
+    event TokenMinted(address to, uint256 tokenId);
+
     /**
      * @dev Internal function to mint a new token
      * Reverts if the given token ID already exists
@@ -453,6 +453,7 @@ contract ERC721Enumerable is ERC165, ERC721 {
         _addTokenToOwnerEnumeration(to, tokenId);
 
         _addTokenToAllTokensEnumeration(tokenId);
+        emit TokenMinted(to, tokenId);
     }
 
     /**
@@ -616,15 +617,14 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -returns a true boolean upon completion of the function
 //      -calls the superclass mint and setTokenURI functions
 
-contract ERC721Mintable is ERC721Metadata {
-
-    constructor(string memory name, string memory symbol)
-        ERC721Metadata(name, symbol, "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/")
-    public {
-
-    }
-
-    function mint(address to, uint256 tokenId) public onlyOwner returns(bool) {
+contract ERC721Mintable is
+    ERC721Metadata(
+        "Udacity Property Coin",
+        "UPC",
+        "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/"
+    )
+{
+    function mint(address to, uint256 tokenId) public onlyOwner returns (bool) {
         super._mint(to, tokenId);
         super._setTokenURI(tokenId);
 
