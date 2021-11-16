@@ -114,7 +114,7 @@ contract SolnSquareVerifier is Verifier, ERC721Mintable {
         );
 
         _solutions[tokenId].minted = _solutions[tokenId].minted++;
-        super._mint(to, tokenId);
+        super.mint(to, tokenId);
         return key2token[keyId];
     }
 }
