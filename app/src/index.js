@@ -100,6 +100,9 @@ handleButtonClick: async function(event) {
         case 1:
             return await App.minting(event);
             break;
+        case 2:
+            return await App.checkTokenURI(event);
+            break;
         }
   },
 
@@ -116,6 +119,14 @@ handleButtonClick: async function(event) {
         })
         
       });
+  },
+
+  checkTokenURI: async function(event){
+    event.preventDefault();
+    let tokenId = $('#tokenID').val();
+    this.meta.methods.tokenURI(tokenId).call({from:App.metamaskAccountID, gasLimit:App.gasLimit}).then(function(result){
+      console.log(result);
+    })
   },
 
   fetchEvents: function () {
