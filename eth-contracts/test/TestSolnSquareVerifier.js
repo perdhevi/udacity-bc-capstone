@@ -24,12 +24,26 @@ contract('SolnSquareVerifier', accounts => {
     it('It can mint new token', async function () { 
 // Test if an ERC721 token can be minted for contract - SolnSquareVerifier
       
-      let keyId = await this.contract.addSolution(account_one, 2, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
-      let minted = await this.contract.mint(account_one, 2, keyId.logs[0].args[0]);
+      let keyId = await this.contract.addSolution(account_one, 1, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
+      let minted = await this.contract.mint(account_one, 1, keyId.logs[0].args[0]);
 
-      assert.equal(minted.logs[1].args["tokenId"] == 2, true, "Should be able to generate a token");
+      assert.equal(minted.logs[1].args["tokenId"] == 1, true, "Should be able to generate a token");
     });
 
+    it('It can mint 5 new token', async function () { 
+      // Test if an ERC721 token can be minted for contract - SolnSquareVerifier
+            var results = [];
+            for(var i = 0;i<5;i++) {
+              let keyId = await this.contract.addSolution(account_one, i, proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs);
+              let minted = await this.contract.mint(account_one, i, keyId.logs[0].args[0]);
+
+              results[i] = minted.logs[1].args["tokenId"];
+            }
+            
+            for(var i=0;i<5;i++) {
+              assert.equal(results[i] == i, true, "Should be able to generate a token for token " + results[i].toString());
+            }
+          });
 
   });
 });

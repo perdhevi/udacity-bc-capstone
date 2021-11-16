@@ -13,14 +13,6 @@ interface ERC721Mintable {
 */
 // TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
 contract SolnSquareVerifier is Verifier, ERC721Mintable {
-    //Verifier verifier;
-
-    /*
-    constructor(address verifierAddress) public {
-        verifier = Verifier(verifierAddress);
-    }
-    */
-
     // TODO define a solutions struct that can hold an index & an address
     struct Solution {
         address to;
@@ -66,13 +58,20 @@ contract SolnSquareVerifier is Verifier, ERC721Mintable {
         require(validProof == true, "Proof is not valid");
 
         bytes32 keyId = keccak256(
-            abi.encodePacked(a[0], a[1], b[0], b[1], c[0], c[1], input)
+            abi.encodePacked(
+                to,
+                tokenId,
+                a[0],
+                a[1],
+                b[0],
+                b[1],
+                c[0],
+                c[1],
+                input
+            )
         );
 
-        require(
-            _solutions[key2token[keyId]].exists == false,
-            "Solution exists"
-        );
+        require(_solutions[tokenId].exists == false, "Solution exists");
 
         key2token[keyId] = tokenId;
         _solutions[tokenId] = Solution(to, tokenId, keyId, true, 0);

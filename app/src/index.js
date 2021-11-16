@@ -1,7 +1,18 @@
+import Web3 from "web3";
+import metaSupplyChain from "../../eth-contracts/build/contracts/SolnSquareVerifier.json";
+import './style.css';
+var proof = require('./proof.json');
 
 
 const App = {
+  web3: null,
+  account:null,
+  meta:null,
+  gasLimit : 6700000, 
 
+  contracts: {},
+  emptyAddress: "0x0000000000000000000000000000000000000000",
+  metamaskAccountID: "0x0000000000000000000000000000000000000000",
   init: async function () {
     //  App.readForm();
     /// Setup access to blockchain
@@ -87,9 +98,24 @@ handleButtonClick: async function(event) {
 
     switch(processId) {
         case 1:
-            //return await App.harvestItem(event);
+            return await App.minting(event);
             break;
         }
+  },
+
+  minting: async function(event){
+    event.preventDefault();
+    let tokenId = $('#tokenID').val();
+    this.meta.methods.addSolution(App.metamaskAccountID, tokenId,  proof.proof.a, proof.proof.b, proof.proof.c, proof.inputs)
+      .send({from:App.metamaskAccountID, gasLimit:App.gasLimit}).then(function(result){
+        
+        let keyId = result.events.SolutionAdded.returnValues[0];
+        console.log("keyId:",keyId);
+        App.meta.methods.mint(App.metamaskAccountID, tokenId, keyId).send({from:App.metamaskAccountID, gasLimit:App.gasLimit}).then(function(result){
+          console.log(result);
+        })
+        
+      });
   },
 
   fetchEvents: function () {
