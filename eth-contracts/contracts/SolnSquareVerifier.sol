@@ -27,7 +27,7 @@ contract SolnSquareVerifier is Verifier, ERC721Mintable {
         uint256 tokenId;
         bytes32 keyId;
         bool exists;
-        bool minted;
+        uint256 minted;
     }
 
     uint256 private solutionCount;
@@ -75,7 +75,7 @@ contract SolnSquareVerifier is Verifier, ERC721Mintable {
         );
 
         key2token[keyId] = tokenId;
-        _solutions[tokenId] = Solution(to, tokenId, keyId, true, false);
+        _solutions[tokenId] = Solution(to, tokenId, keyId, true, 0);
         solutionCount = solutionCount + 1;
 
         emit SolutionAdded(keyId, tokenId, to);
@@ -114,9 +114,7 @@ contract SolnSquareVerifier is Verifier, ERC721Mintable {
             "KeyId doesn't match with tokenId"
         );
 
-        require(_solutions[tokenId].minted == false, "token has been minted");
-
-        _solutions[tokenId].minted = true;
+        _solutions[tokenId].minted = _solutions[tokenId].minted++;
         super._mint(to, tokenId);
         return key2token[keyId];
     }

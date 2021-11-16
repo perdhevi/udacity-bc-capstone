@@ -12,7 +12,7 @@ contract('Test Verifier', accounts => {
 // - use the contents from proof.json generated from zokrates steps
     it("can can compute correct", async function() {
       let result = await this.contract.verifyTx.call(proof.proof, proof.inputs);
-      console.log(proof);
+      //console.log(proof);
       assert.equal(result, true, "Must proof as correct");
     });
     

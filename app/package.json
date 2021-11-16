@@ -1,14 +1,21 @@
 {
-  "name": "udacity-minter",
+  "name": "app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   },
-  "author": "Raditya Perdhevi",
-  "license": "ISC",
+  "devDependencies": {
+    "copy-webpack-plugin": "^5.0.5",
+    "css-loader": "^5.2.7",
+    "style-loader": "^2.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
   "dependencies": {
-    "web3": "^1.6.0"
+    "web3": "^1.2.4"
   }
 }
